@@ -10,7 +10,7 @@ import android.view.MenuItem;
  * An activity representing a single Movie detail screen. This
  * activity is only used on handset devices. On tablet-size devices,
  * item details are presented side-by-side with a list of items
- * in a {@link MovieListActivity}.
+ * in a {@link MovieGridActivity}.
  * <p/>
  * This activity is mostly just a 'shell' activity containing nothing
  * more than a {@link MovieDetailFragment}.
@@ -59,7 +59,7 @@ public class MovieDetailActivity extends ActionBarActivity {
             //
             // http://developer.android.com/design/patterns/navigation.html#up-vs-back
             //
-            NavUtils.navigateUpTo(this, new Intent(this, MovieListActivity.class));
+            NavUtils.navigateUpTo(this, new Intent(this, MovieGridActivity.class));
             return true;
         }
         return super.onOptionsItemSelected(item);

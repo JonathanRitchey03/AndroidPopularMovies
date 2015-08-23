@@ -11,7 +11,7 @@ import com.jonathanritchey.movies.dummy.DummyContent;
 
 /**
  * A fragment representing a single Movie detail screen.
- * This fragment is either contained in a {@link MovieListActivity}
+ * This fragment is either contained in a {@link MovieGridActivity}
  * in two-pane mode (on tablets) or a {@link MovieDetailActivity}
  * on handsets.
  */
