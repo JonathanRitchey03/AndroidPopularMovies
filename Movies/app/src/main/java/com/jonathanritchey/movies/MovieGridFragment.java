@@ -6,7 +6,6 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.text.format.Time;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -28,20 +27,21 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 
 public class MovieGridFragment extends Fragment {
+    private static final String API_KEY = null;
     public GridView mGridView;
     public ArrayAdapter<MovieModel.MovieItem> mArrayAdapter;
     private static final String STATE_ACTIVATED_POSITION = "activated_position";
-    private Callbacks mCallbacks = sDummyCallbacks;
+    private Callbacks mCallbacks = sMovieCallbacks;
     private int mActivatedPosition = ListView.INVALID_POSITION;
 
     private static boolean VERBOSE_LOGGING = true;
     private static String LOG_TAG = MovieModel.class.getSimpleName();
 
 
-    private static Callbacks sDummyCallbacks = new Callbacks() {
+    private static Callbacks sMovieCallbacks = new Callbacks() {
         @Override
         public void onItemSelected(String id) {
         }
@@ -50,12 +50,13 @@ public class MovieGridFragment extends Fragment {
     public MovieGridFragment() {
     }
 
-    @Nullable @Override
+    @Nullable
+    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
         View v = inflater.inflate(R.layout.movie_grid_view, container, false);
         mGridView = (GridView)v.findViewById(R.id.movie_grid);
-        mArrayAdapter = new ArrayAdapter<MovieModel.MovieItem>(
+        mArrayAdapter = new ArrayAdapter<>(
                 getActivity(),
                 android.R.layout.simple_list_item_activated_1,
                 android.R.id.text1,
@@ -64,8 +65,6 @@ public class MovieGridFragment extends Fragment {
         mGridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                // Notify the active callbacks interface (the activity, if the
-                // fragment is attached to one) that an item has been selected.
                 mCallbacks.onItemSelected(MovieModel.ITEMS.get(position).id);
             }
         });
@@ -86,7 +85,6 @@ public class MovieGridFragment extends Fragment {
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
-        // Activities containing this fragment must implement its callbacks.
         if (!(activity instanceof Callbacks)) {
             throw new IllegalStateException("Activity must implement fragment's callbacks.");
         }
@@ -96,15 +94,13 @@ public class MovieGridFragment extends Fragment {
     @Override
     public void onDetach() {
         super.onDetach();
-        // Reset the active callbacks interface to the dummy implementation.
-        mCallbacks = sDummyCallbacks;
+        mCallbacks = sMovieCallbacks;
     }
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         if (mActivatedPosition != ListView.INVALID_POSITION) {
-            // Serialize and persist the activated item position.
             outState.putInt(STATE_ACTIVATED_POSITION, mActivatedPosition);
         }
     }
@@ -117,189 +113,68 @@ public class MovieGridFragment extends Fragment {
     }
 
     public interface Callbacks {
-        public void onItemSelected(String id);
+        void onItemSelected(String id);
     }
 
-
-    public class FetchDataTask extends AsyncTask<String, Void, String[]> {
-        private String[] getWeatherDataFromJson(String forecastJsonStr, int numDays, String temperatureUnit)
-                throws JSONException {
-
-            // These are the names of the JSON objects that need to be extracted.
-            final String OWM_LIST = "list";
-            final String OWM_WEATHER = "weather";
-            final String OWM_TEMPERATURE = "temp";
-            final String OWM_MAX = "max";
-            final String OWM_MIN = "min";
-            final String OWM_DESCRIPTION = "main";
-
-            JSONObject forecastJson = new JSONObject(forecastJsonStr);
-            JSONArray weatherArray = forecastJson.getJSONArray(OWM_LIST);
-
-            // OWM returns daily forecasts based upon the local time of the city that is being
-            // asked for, which means that we need to know the GMT offset to translate this data
-            // properly.
-
-            // Since this data is also sent in-order and the first day is always the
-            // current day, we're going to take advantage of that to get a nice
-            // normalized UTC date for all of our weather.
-
-            Time dayTime = new Time();
-            dayTime.setToNow();
-
-            // we start at the day returned by local time. Otherwise this is a mess.
-            int julianStartDay = Time.getJulianDay(System.currentTimeMillis(), dayTime.gmtoff);
-
-            // now we work exclusively in UTC
-            dayTime = new Time();
-
-            String[] resultStrs = new String[numDays];
-            for(int i = 0; i < weatherArray.length(); i++) {
-                // For now, using the format "Day, description, hi/low"
-                String day;
-                String description;
-                String highAndLow;
-
-                // Get the JSON object representing the day
-                JSONObject dayForecast = weatherArray.getJSONObject(i);
-
-                // The date/time is returned as a long.  We need to convert that
-                // into something human-readable, since most people won't read "1400356800" as
-                // "this saturday".
-                long dateTime;
-                // Cheating to convert this to UTC time, which is what we want anyhow
-                dateTime = dayTime.setJulianDay(julianStartDay+i);
-                day = getReadableDateString(dateTime);
-
-                // description is in a child array called "weather", which is 1 element long.
-                JSONObject weatherObject = dayForecast.getJSONArray(OWM_WEATHER).getJSONObject(0);
-                description = weatherObject.getString(OWM_DESCRIPTION);
-
-                // Temperatures are in a child object called "temp".  Try not to name variables
-                // "temp" when working with temperature.  It confuses everybody.
-                JSONObject temperatureObject = dayForecast.getJSONObject(OWM_TEMPERATURE);
-                double high = temperatureObject.getDouble(OWM_MAX);
-                double low = temperatureObject.getDouble(OWM_MIN);
-                if ( temperatureUnit.equals("imperial") ) {
-                    high = celciusToFahrenheit(high);
-                    low = celciusToFahrenheit(low);
-                }
-                highAndLow = formatHighLows(high, low);
-                resultStrs[i] = day + " - " + description + " - " + highAndLow;
-            }
-
-            for (String s : resultStrs) {
-                if ( VERBOSE_LOGGING ) Log.v(LOG_TAG, "Forecast entry: " + s);
-            }
-            return resultStrs;
-        }
-
-        private String getReadableDateString(long time){
-            // Because the API returns a unix timestamp (measured in seconds),
-            // it must be converted to milliseconds in order to be converted to valid date.
-            SimpleDateFormat shortenedDateFormat = new SimpleDateFormat("EEE MMM dd");
-            return shortenedDateFormat.format(time);
-        }
-
-        private String formatHighLows(double high, double low) {
-            // For presentation, assume the user doesn't care about tenths of a degree.
-            long roundedHigh = Math.round(high);
-            long roundedLow = Math.round(low);
-
-            String highLowStr = roundedHigh + "/" + roundedLow;
-            return highLowStr;
-        }
-
-        double celciusToFahrenheit(double celcius) {
-            return celcius * 9.0 / 5.0 + 32.0;
-        }
-
+    public class FetchDataTask extends AsyncTask<String, Void, ArrayList<MovieModel.MovieItem>> {
         @Override
-        protected void onPostExecute(String[] strings) {
-            super.onPostExecute(strings);
-            if ( strings != null ) {
+        protected void onPostExecute(ArrayList<MovieModel.MovieItem> movieItems) {
+            super.onPostExecute(movieItems);
+            if ( movieItems != null ) {
                 MovieModel.clear();
-                int i = 0;
-                for ( String entry : strings ) {
-                    //mForecastAdapter.add(entry);
-                    MovieModel.addItem(new MovieModel.MovieItem(""+i,entry));
-                    i++;
+                for ( MovieModel.MovieItem entry : movieItems ) {
+                    MovieModel.addItem(entry);
                 }
                 mArrayAdapter.notifyDataSetChanged();
             }
         }
 
         @Override
-        protected String[] doInBackground(String... params) {
-            // These two need to be declared outside the try/catch
-            // so that they can be closed in the finally block.
+        protected ArrayList<MovieModel.MovieItem> doInBackground(String... params) {
             HttpURLConnection urlConnection = null;
             BufferedReader reader = null;
-
-            // Will contain the raw JSON response as a string.
-            String forecastJsonStr = null;
-
+            String movieJsonString = null;
             try {
-                // Construct the URL for the OpenWeatherMap query
-                // Possible parameters are avaiable at OWM's forecast API page, at
-                // http://openweathermap.org/API#forecast
-                //URL url = new URL("http://api.openweathermap.org/data/2.5/forecast/daily?q=94043&mode=json&units=metric&cnt=7");
                 Uri.Builder builder = new Uri.Builder();
-                builder.scheme("http").authority("api.openweathermap.org").appendPath("data").appendPath("2.5").appendPath("forecast").appendPath("daily");
-                builder.appendQueryParameter("q", params[0]);
-                builder.appendQueryParameter("mode", "json");
-                builder.appendQueryParameter("units", "metric");
-                builder.appendQueryParameter("cnt","7");
+                builder.scheme("http").authority("api.themoviedb.org").appendPath("3").appendPath("movie").appendPath(params[0]);
+                builder.appendQueryParameter("api_key", API_KEY);
                 URL url = new URL(builder.build().toString());
-
-                // Create the request to OpenWeatherMap, and open the connection
                 urlConnection = (HttpURLConnection) url.openConnection();
                 urlConnection.setRequestMethod("GET");
                 urlConnection.connect();
+                try {
+                    // Will throw IOException if server responds with 401.
+                    urlConnection.getResponseCode();
+                } catch (IOException e) {
+                    // Will return 401, because now connection has the correct internal state.
+                    int responsecode = urlConnection.getResponseCode();
+                }
 
-                // Read the input stream into a String
                 InputStream inputStream = urlConnection.getInputStream();
                 StringBuffer buffer = new StringBuffer();
-                if (inputStream == null) {
-                    // Nothing to do.
-                    return null;
-                }
+                if (inputStream == null) return null;
                 reader = new BufferedReader(new InputStreamReader(inputStream));
-
                 String line;
-                while ((line = reader.readLine()) != null) {
-                    // Since it's JSON, adding a newline isn't necessary (it won't affect parsing)
-                    // But it does make debugging a *lot* easier if you print out the completed
-                    // buffer for debugging.
-                    buffer.append(line + "\n");
-                }
-
-                if (buffer.length() == 0) {
-                    // Stream was empty.  No point in parsing.
-                    return null;
-                }
-                forecastJsonStr = buffer.toString();
+                while ((line = reader.readLine()) != null) buffer.append(line + "\n");
+                if (buffer.length() == 0) return null;
+                movieJsonString = buffer.toString();
             } catch (IOException e) {
                 Log.e(LOG_TAG, "Error ", e);
-                // If the code didn't successfully get the weather data, there's no point in attempting
-                // to parse it.
                 return null;
-            } finally{
-                if (urlConnection != null) {
-                    urlConnection.disconnect();
-                }
-                if (reader != null) {
+            } finally {
+                if ( urlConnection != null ) urlConnection.disconnect();
+                if ( reader != null ) {
                     try {
                         reader.close();
                     } catch (final IOException e) {
                         Log.e(LOG_TAG, "Error closing stream", e);
                     }
                 }
-                if ( VERBOSE_LOGGING ) Log.v(LOG_TAG, "Forecast JSON String "+forecastJsonStr);
-                String weatherData[];
+                if ( VERBOSE_LOGGING ) Log.v(LOG_TAG, "Forecast JSON String "+movieJsonString);
+                ArrayList<MovieModel.MovieItem> movieItems;
                 try {
-                    weatherData = getWeatherDataFromJson(forecastJsonStr, 7, params[1]);
-                    return weatherData;
+                    movieItems = getMovieDataFromJSON(movieJsonString);
+                    return movieItems;
                 } catch (JSONException e) {
                     Log.e(LOG_TAG,"Exception "+e);
                 }
@@ -308,8 +183,55 @@ public class MovieGridFragment extends Fragment {
         }
     }
 
+    private ArrayList<MovieModel.MovieItem> getMovieDataFromJSON(String jsonStr)
+            throws JSONException {
+        /*
+        "adult":false,
+         "backdrop_path":"/tbhdm8UJAb4ViCTsulYFL3lxMCd.jpg",
+         "genre_ids":[
+            53,
+            28,
+            12
+         ],
+         "id":76341,
+         "original_language":"en",
+         "original_title":"Mad Max: Fury Road",
+         "overview":"An apocalyptic story set in the furthest reaches of our planet, in a stark desert landscape where humanity is broken, and most everyone is crazed fighting for the necessities of life. Within this world exist two rebels on the run who just might be able to restore order. There's Max, a man of action and a man of few words, who seeks peace of mind following the loss of his wife and child in the aftermath of the chaos. And Furiosa, a woman of action and a woman who believes her path to survival may be achieved if she can make it across the desert back to her childhood homeland.",
+         "release_date":"2015-05-15",
+         "poster_path":"/kqjL17yufvn9OVLyXYpvtyrFfak.jpg",
+         "popularity":51.220824,
+         "title":"Mad Max: Fury Road",
+         "video":false,
+         "vote_average":7.8,
+         "vote_count":1836
+         */
+        final String RESULTS_ARRAY_KEY = "results";
+        final String ADULT_BOOL_KEY = "adult";
+        final String POSTER_PATH_STRING_KEY = "poster_path";
+        final String OVERVIEW_STRING_KEY = "overview";
+
+        JSONObject jsonObject = new JSONObject(jsonStr);
+        JSONArray movieArray = jsonObject.getJSONArray(RESULTS_ARRAY_KEY);
+        String[] resultStrs = new String[movieArray.length()];
+        ArrayList<MovieModel.MovieItem> movieItems = new ArrayList<>();
+        for(int i = 0; i < resultStrs.length; i++) {
+            JSONObject movieObject = movieArray.getJSONObject(i);
+            boolean adult = movieObject.getBoolean(ADULT_BOOL_KEY);
+            if ( !adult ) {
+                String id = ""+movieItems.size();
+                movieItems.add(new MovieModel.MovieItem(id,
+                        movieObject.getString(OVERVIEW_STRING_KEY),
+                        movieObject.getString(POSTER_PATH_STRING_KEY)));
+            }
+        }
+        for (String s : resultStrs) {
+            if ( VERBOSE_LOGGING ) Log.v(LOG_TAG, "Movie entry: " + s);
+        }
+        return movieItems;
+    }
+
     public void fetchData() {
         FetchDataTask fetchDataTask = new FetchDataTask();
-        fetchDataTask.execute("94030","metric");
+        fetchDataTask.execute("popular");
     }
 }

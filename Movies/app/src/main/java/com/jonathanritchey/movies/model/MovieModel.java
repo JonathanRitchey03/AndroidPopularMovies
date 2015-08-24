@@ -6,12 +6,8 @@ import java.util.List;
 import java.util.Map;
 
 public class MovieModel {
-
-    private static boolean VERBOSE_LOGGING = true;
-    private static String LOG_TAG = MovieModel.class.getSimpleName();
-
-    public static List<MovieItem> ITEMS = new ArrayList<MovieItem>();
-    public static Map<String, MovieItem> ITEM_MAP = new HashMap<String, MovieItem>();
+    public static List<MovieItem> ITEMS = new ArrayList<>();
+    public static Map<String, MovieItem> ITEM_MAP = new HashMap<>();
 
     public static void addItem(MovieItem item) {
         ITEMS.add(item);
@@ -19,22 +15,18 @@ public class MovieModel {
     }
 
     public static void clear() {
-//        ITEMS = new ArrayList<MovieItem>();
-//        ITEM_MAP = new HashMap<String,MovieItem>();
+        ITEMS.clear();
+        ITEM_MAP.clear();
     }
 
     public static class MovieItem {
-        public String id;
-        public String content;
-
-        public MovieItem(String id, String content) {
-            this.id = id;
-            this.content = content;
+        public String id, overview, posterPath;
+        public MovieItem(String aId, String aOverview, String aPosterPath) {
+            id = aId; overview = aOverview; posterPath = aPosterPath;
         }
-
         @Override
         public String toString() {
-            return content;
+            return "overview:"+overview+" posterPath:"+posterPath;
         }
     }
 }
