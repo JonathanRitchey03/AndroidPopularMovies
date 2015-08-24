@@ -15,14 +15,10 @@ import android.widget.ListView;
 import com.jonathanritchey.movies.dummy.DummyContent;
 
 public class MovieGridFragment extends Fragment {
-
     public GridView mGridView;
     private static final String STATE_ACTIVATED_POSITION = "activated_position";
     private Callbacks mCallbacks = sDummyCallbacks;
     private int mActivatedPosition = ListView.INVALID_POSITION;
-    public interface Callbacks {
-        public void onItemSelected(String id);
-    }
     private static Callbacks sDummyCallbacks = new Callbacks() {
         @Override
         public void onItemSelected(String id) {
@@ -32,19 +28,7 @@ public class MovieGridFragment extends Fragment {
     public MovieGridFragment() {
     }
 
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-//        // TODO: replace with a real list adapter.
-//        setListAdapter(new ArrayAdapter<DummyContent.DummyItem>(
-//                getActivity(),
-//                android.R.layout.simple_list_item_activated_1,
-//                android.R.id.text1,
-//                DummyContent.ITEMS));
-    }
-
-    @Nullable
-    @Override
+    @Nullable @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
         View v = inflater.inflate(R.layout.movie_grid_view, container, false);
@@ -101,5 +85,9 @@ public class MovieGridFragment extends Fragment {
         mGridView.setItemChecked(invalidPosition ? mActivatedPosition : position,
                                  invalidPosition ? false : true);
         mActivatedPosition = position;
+    }
+
+    public interface Callbacks {
+        public void onItemSelected(String id);
     }
 }
