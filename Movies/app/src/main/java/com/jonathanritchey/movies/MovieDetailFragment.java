@@ -7,11 +7,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.jonathanritchey.movies.dummy.DummyContent;
+import com.jonathanritchey.movies.model.MovieModel;
 
 public class MovieDetailFragment extends Fragment {
     public static final String ARG_ITEM_ID = "item_id";
-    private DummyContent.DummyItem mItem;
+    private MovieModel.MovieItem mItem;
     public MovieDetailFragment() {
     }
     @Override
@@ -21,7 +21,7 @@ public class MovieDetailFragment extends Fragment {
             // Load the dummy content specified by the fragment
             // arguments. In a real-world scenario, use a Loader
             // to load content from a content provider.
-            mItem = DummyContent.ITEM_MAP.get(getArguments().getString(ARG_ITEM_ID));
+            mItem = com.jonathanritchey.movies.model.MovieModel.ITEM_MAP.get(getArguments().getString(ARG_ITEM_ID));
         }
     }
     @Override
