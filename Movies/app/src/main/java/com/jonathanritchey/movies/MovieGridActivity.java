@@ -44,9 +44,9 @@ public class MovieGridActivity extends FragmentActivity
 
             // In two-pane mode, list items should be given the
             // 'activated' state when touched.
-            ((MovieGridFragment) getSupportFragmentManager()
-                    .findFragmentById(R.id.movie_list))
-                    .setActivateOnItemClick(true);
+//            ((MovieGridFragment) getSupportFragmentManager()
+//                    .findFragmentById(R.id.movie_list))
+//                    .setActivateOnItemClick(true);
         }
 
         // TODO: If exposing deep links into your app, handle intents here.
