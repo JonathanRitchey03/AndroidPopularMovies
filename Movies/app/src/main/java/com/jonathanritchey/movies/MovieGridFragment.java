@@ -47,7 +47,7 @@ public class MovieGridFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
-        View v = inflater.inflate(R.layout.movie_grid, container, false);
+        View v = inflater.inflate(R.layout.movie_grid_view, container, false);
         mGridView = (GridView)v.findViewById(R.id.movie_grid);
         String [] strings = new String[] {
                 "Item 1",
@@ -56,7 +56,7 @@ public class MovieGridFragment extends Fragment {
         };
         ArrayList<String> fakeData = new ArrayList<>(Arrays.asList(strings));
         mArrayAdapter = new ArrayAdapter<String>(getActivity(),
-                R.layout.movie_cell_view,
+                R.layout.movie_grid_cell_view,
                 R.id.movie_cell_view_description,
                 fakeData);
         mGridView.setAdapter(mArrayAdapter);
@@ -75,7 +75,7 @@ public class MovieGridFragment extends Fragment {
 //    @Override
 //    public void onViewCreated(View view, Bundle savedInstanceState) {
 //        super.onViewCreated(view, savedInstanceState);
-//        View v = inflater.inflate(R.layout.movie_grid, container, false);
+//        View v = inflater.inflate(R.layout.movie_grid_view, container, false);
 //        mGridView = (GridView)v.findViewById(R.id.gridView);
 //        // Restore the previously serialized activated item position.
 //        if (savedInstanceState != null

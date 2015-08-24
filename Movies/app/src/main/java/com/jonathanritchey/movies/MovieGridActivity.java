@@ -5,36 +5,15 @@ import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 
 
-/**
- * An activity representing a list of Movies. This activity
- * has different presentations for handset and tablet-size devices. On
- * handsets, the activity presents a list of items, which when touched,
- * lead to a {@link MovieDetailActivity} representing
- * item details. On tablets, the activity presents the list of items and
- * item details side-by-side using two vertical panes.
- * <p/>
- * The activity makes heavy use of fragments. The list of items is a
- * {@link MovieGridFragment} and the item details
- * (if present) is a {@link MovieDetailFragment}.
- * <p/>
- * This activity also implements the required
- * {@link MovieGridFragment.Callbacks} interface
- * to listen for item selections.
- */
 public class MovieGridActivity extends FragmentActivity
         implements MovieGridFragment.Callbacks {
 
-    /**
-     * Whether or not the activity is in two-pane mode, i.e. running on a tablet
-     * device.
-     */
     private boolean mTwoPane;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_movie_list);
-
+        setContentView(R.layout.activity_movie_grid);
         if (findViewById(R.id.movie_detail_container) != null) {
             // The detail container view will be present only in the
             // large-screen layouts (res/values-large and
