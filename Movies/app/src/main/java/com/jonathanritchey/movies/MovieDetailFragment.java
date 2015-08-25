@@ -5,9 +5,11 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.jonathanritchey.movies.model.MovieModel;
+import com.squareup.picasso.Picasso;
 
 public class MovieDetailFragment extends Fragment {
     public static final String ARG_ITEM_ID = "item_id";
@@ -30,7 +32,12 @@ public class MovieDetailFragment extends Fragment {
         View rootView = inflater.inflate(R.layout.fragment_movie_detail, container, false);
         // Show the dummy content as text in a TextView.
         if (mItem != null) {
-            ((TextView) rootView.findViewById(R.id.movie_detail)).setText(mItem.overview);
+            ((TextView) rootView.findViewById(R.id.movie_detail_overview)).setText(mItem.overview);
+            ImageView imageView = ((ImageView) rootView.findViewById(R.id.movie_detail_imageview));
+            Picasso.with(getActivity().getApplicationContext()).load(mItem.posterPath).into(imageView);
+            ((TextView) rootView.findViewById(R.id.movie_detail_title)).setText(mItem.title);
+            ((TextView) rootView.findViewById(R.id.movie_detail_vote_average)).setText(mItem.voteAverage);
+            ((TextView) rootView.findViewById(R.id.movie_detail_release_date)).setText(mItem.releaseDate);
         }
         return rootView;
     }

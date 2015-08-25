@@ -1,5 +1,61 @@
-<TextView xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools" android:id="@+id/movie_detail"
-    style="?android:attr/textAppearanceLarge" android:layout_width="match_parent"
-    android:layout_height="match_parent" android:padding="16dp" android:textIsSelectable="true"
-    tools:context=".MovieDetailFragment" />
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/movie_detail"
+    xmlns:tools="http://schemas.android.com/tools"
+    style="?android:attr/textAppearanceLarge"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:padding="16dp"
+    android:orientation="vertical"
+    tools:context=".MovieDetailFragment">
+    <TextView
+        android:id="@+id/movie_detail_title"
+        android:layout_width="match_parent"
+        android:layout_height="100dp"
+        android:background="@color/material_blue_grey_800"
+        android:textColor="@color/translucent_white"
+        android:textSize="32dp"
+        android:text="Chappie"
+        android:layout_gravity="center_vertical"
+        android:gravity="center_vertical"
+        android:paddingLeft="20dp"
+        />
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="200dp"
+        android:orientation="horizontal">
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_weight="1">
+            <ImageView
+                android:id="@+id/movie_detail_imageview"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                />
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="100dp"
+            android:layout_height="200dp"
+            android:orientation="vertical"
+            android:layout_weight="1">
+            <TextView
+                android:id="@+id/movie_detail_release_date"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Release Date"
+                />
+            <TextView
+                android:id="@+id/movie_detail_vote_average"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Vote Average"
+                />
+        </LinearLayout>
+    </LinearLayout>
+    <TextView
+        android:id="@+id/movie_detail_overview"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Lorem ipsum dolerem"/>
+</LinearLayout>

@@ -20,9 +20,9 @@ public class MovieModel {
     }
 
     public static class MovieItem {
-        public String id, overview, posterPath;
-        public MovieItem(String aId, String aOverview, String aPosterPath) {
-            id = aId; overview = aOverview; posterPath = aPosterPath;
+        public String id, overview, posterPath, title, releaseDate, voteAverage;
+        public MovieItem(String aId) {
+            id = aId;
         }
         @Override
         public String toString() {

@@ -1,7 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
-<TextView xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent" android:layout_height="wrap_content"
-    android:gravity="center_vertical"
-    android:id = "@+id/movie_cell_view_description"
-    android:text="Today - Sunny - 88/63">
-</TextView>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="400dp"
+        android:id="@+id/movie_cell_image_view"
+        />
+    <TextView android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:id="@+id/movie_cell_text_view">
+    </TextView>
+</LinearLayout>

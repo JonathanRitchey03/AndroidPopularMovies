@@ -11,7 +11,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.GridView;
 import android.widget.ListView;
 
@@ -25,6 +24,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
@@ -32,7 +32,7 @@ import java.util.ArrayList;
 public class MovieGridFragment extends Fragment {
     private static final String API_KEY = null;
     public GridView mGridView;
-    public ArrayAdapter<MovieModel.MovieItem> mArrayAdapter;
+    public MovieGridAdapter mMovieGridAdapter;
     private static final String STATE_ACTIVATED_POSITION = "activated_position";
     private Callbacks mCallbacks = sMovieCallbacks;
     private int mActivatedPosition = ListView.INVALID_POSITION;
@@ -56,12 +56,8 @@ public class MovieGridFragment extends Fragment {
         super.onCreateView(inflater, container, savedInstanceState);
         View v = inflater.inflate(R.layout.movie_grid_view, container, false);
         mGridView = (GridView)v.findViewById(R.id.movie_grid);
-        mArrayAdapter = new ArrayAdapter<>(
-                getActivity(),
-                android.R.layout.simple_list_item_activated_1,
-                android.R.id.text1,
-                MovieModel.ITEMS);
-        mGridView.setAdapter(mArrayAdapter);
+        mMovieGridAdapter = new MovieGridAdapter(getActivity(),R.id.movie_cell_text_view,MovieModel.ITEMS);
+        mGridView.setAdapter(mMovieGridAdapter);
         mGridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -125,7 +121,7 @@ public class MovieGridFragment extends Fragment {
                 for ( MovieModel.MovieItem entry : movieItems ) {
                     MovieModel.addItem(entry);
                 }
-                mArrayAdapter.notifyDataSetChanged();
+                mMovieGridAdapter.notifyDataSetChanged();
             }
         }
 
@@ -136,6 +132,8 @@ public class MovieGridFragment extends Fragment {
             String movieJsonString = null;
             try {
                 Uri.Builder builder = new Uri.Builder();
+                // http://api.themoviedb.org/3/movie/popular?api_key=
+
                 builder.scheme("http").authority("api.themoviedb.org").appendPath("3").appendPath("movie").appendPath(params[0]);
                 builder.appendQueryParameter("api_key", API_KEY);
                 URL url = new URL(builder.build().toString());
@@ -209,7 +207,9 @@ public class MovieGridFragment extends Fragment {
         final String ADULT_BOOL_KEY = "adult";
         final String POSTER_PATH_STRING_KEY = "poster_path";
         final String OVERVIEW_STRING_KEY = "overview";
-
+        final String RELEASE_DATE_STRING_KEY = "release_date";
+        final String TITLE_STRING_KEY = "title";
+        final String VOTE_AVERAGE_STRING_KEY = "vote_average";
         JSONObject jsonObject = new JSONObject(jsonStr);
         JSONArray movieArray = jsonObject.getJSONArray(RESULTS_ARRAY_KEY);
         String[] resultStrs = new String[movieArray.length()];
@@ -219,9 +219,22 @@ public class MovieGridFragment extends Fragment {
             boolean adult = movieObject.getBoolean(ADULT_BOOL_KEY);
             if ( !adult ) {
                 String id = ""+movieItems.size();
-                movieItems.add(new MovieModel.MovieItem(id,
-                        movieObject.getString(OVERVIEW_STRING_KEY),
-                        movieObject.getString(POSTER_PATH_STRING_KEY)));
+                MovieModel.MovieItem movieItem = new MovieModel.MovieItem(id);
+                movieItem.overview = movieObject.getString(OVERVIEW_STRING_KEY);
+                String posterPath = movieObject.getString(POSTER_PATH_STRING_KEY);
+                Uri.Builder builder = new Uri.Builder();
+                builder.scheme("http").authority("image.tmdb.org").appendPath("t").appendPath("p").appendPath("w185").appendPath(posterPath);
+                posterPath = builder.build().toString();
+                try {
+                    posterPath = java.net.URLDecoder.decode(posterPath, "UTF-8");
+                } catch ( UnsupportedEncodingException e ) {
+                    Log.e(LOG_TAG, "Exception "+e.toString());
+                }
+                movieItem.posterPath = posterPath;
+                movieItem.releaseDate = movieObject.getString(RELEASE_DATE_STRING_KEY);
+                movieItem.title = movieObject.getString(TITLE_STRING_KEY);
+                movieItem.voteAverage = movieObject.getString(VOTE_AVERAGE_STRING_KEY);
+                movieItems.add(movieItem);
             }
         }
         for (String s : resultStrs) {
