@@ -8,6 +8,9 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -30,6 +33,7 @@ import java.net.URL;
 import java.util.ArrayList;
 
 public class MovieGridFragment extends Fragment {
+    private static String mSortCriteria = "popular";
     private static final String API_KEY = null;
     public GridView mGridView;
     public MovieGridAdapter mMovieGridAdapter;
@@ -48,6 +52,37 @@ public class MovieGridFragment extends Fragment {
     };
 
     public MovieGridFragment() {
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        String previousCriteria = new String(mSortCriteria);
+        switch(item.getItemId()) {
+            case R.id.action_sort_by_popularity:
+                mSortCriteria = "popular";
+                break;
+            case R.id.action_sort_by_rating:
+                mSortCriteria = "top_rated";
+                break;
+        }
+        if ( !mSortCriteria.equals(previousCriteria) ) {
+            fetchData();
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        setHasOptionsMenu(true);
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        super.onCreateOptionsMenu(menu, inflater);
+        menu.clear();
+        inflater.inflate(R.menu.menu, menu);
     }
 
     @Nullable
@@ -245,6 +280,6 @@ public class MovieGridFragment extends Fragment {
 
     public void fetchData() {
         FetchDataTask fetchDataTask = new FetchDataTask();
-        fetchDataTask.execute("popular");
+        fetchDataTask.execute(mSortCriteria);
     }
 }
