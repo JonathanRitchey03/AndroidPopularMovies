@@ -2,10 +2,10 @@ package com.jonathanritchey.movies;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AppCompatActivity;
 
 
-public class MovieGridActivity extends ActionBarActivity
+public class MovieGridActivity extends AppCompatActivity
         implements MovieGridFragment.Callbacks {
 
     private boolean mTwoPane;

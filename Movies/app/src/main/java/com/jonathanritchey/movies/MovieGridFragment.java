@@ -33,8 +33,9 @@ import java.net.URL;
 import java.util.ArrayList;
 
 public class MovieGridFragment extends Fragment {
-    private static String mSortCriteria = "popular";
     private static final String API_KEY = null;
+
+    private static String mSortCriteria = "popular";
     public GridView mGridView;
     public MovieGridAdapter mMovieGridAdapter;
     private static final String STATE_ACTIVATED_POSITION = "activated_position";
