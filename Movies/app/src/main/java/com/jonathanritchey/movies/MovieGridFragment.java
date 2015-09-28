@@ -16,6 +16,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.GridView;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import com.jonathanritchey.movies.model.MovieModel;
 
@@ -33,7 +34,12 @@ import java.net.URL;
 import java.util.ArrayList;
 
 public class MovieGridFragment extends Fragment {
+
+    // --------------------------------------------------------------
+    // INSERT YOUR API KEY FROM https://www.themoviedb.org/documentation/api
+    // HERE
     private static final String API_KEY = null;
+    // --------------------------------------------------------------
 
     private static String mSortCriteria = "popular";
     public GridView mGridView;
@@ -280,7 +286,11 @@ public class MovieGridFragment extends Fragment {
     }
 
     public void fetchData() {
-        FetchDataTask fetchDataTask = new FetchDataTask();
-        fetchDataTask.execute(mSortCriteria);
+        if ( API_KEY == null ) {
+            Toast.makeText(getActivity().getApplicationContext(), R.string.replace_api_key, Toast.LENGTH_LONG).show();
+        } else {
+            FetchDataTask fetchDataTask = new FetchDataTask();
+            fetchDataTask.execute(mSortCriteria);
+        }
     }
 }

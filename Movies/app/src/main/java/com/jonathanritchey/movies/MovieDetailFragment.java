@@ -36,8 +36,11 @@ public class MovieDetailFragment extends Fragment {
             ImageView imageView = ((ImageView) rootView.findViewById(R.id.movie_detail_imageview));
             Picasso.with(getActivity().getApplicationContext()).load(mItem.posterPath).into(imageView);
             ((TextView) rootView.findViewById(R.id.movie_detail_title)).setText(mItem.title);
-            ((TextView) rootView.findViewById(R.id.movie_detail_vote_average)).setText(mItem.voteAverage);
-            ((TextView) rootView.findViewById(R.id.movie_detail_release_date)).setText(mItem.releaseDate);
+            String voteAveragePrefix = getActivity().getString(R.string.vote_average_prefix);
+            String voteAverageSuffix = getActivity().getString(R.string.vote_average_suffix);
+            ((TextView) rootView.findViewById(R.id.movie_detail_vote_average)).setText(voteAveragePrefix+mItem.voteAverage+voteAverageSuffix);
+            String releaseDatePrefx = getActivity().getString(R.string.release_date_prefix);
+            ((TextView) rootView.findViewById(R.id.movie_detail_release_date)).setText(releaseDatePrefx+mItem.releaseDate);
         }
         return rootView;
     }

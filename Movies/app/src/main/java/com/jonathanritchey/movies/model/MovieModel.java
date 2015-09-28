@@ -20,13 +20,14 @@ public class MovieModel {
     }
 
     public static class MovieItem {
-        public String id, overview, posterPath, title, releaseDate, voteAverage;
+        public String id, overview, posterPath, title, releaseDate, voteAverage, length;
         public MovieItem(String aId) {
             id = aId;
         }
         @Override
         public String toString() {
-            return "overview:"+overview+" posterPath:"+posterPath;
+            return "overview:"+overview+" posterPath:"+posterPath+" title:"+title+
+                    " releaseDate:"+releaseDate+" "+" voteAverage:"+voteAverage+" length:"+length;
         }
     }
 }
