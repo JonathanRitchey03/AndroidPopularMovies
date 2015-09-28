@@ -4,7 +4,7 @@
     <string name="action_sort_by_popularity">Sort by Popularity</string>
     <string name="action_sort_by_rating">Sort by Rating</string>
     <string name="replace_api_key">Replace MovieGridFragment.API_KEY w/ actual API_KEY and recompile.</string>
-    <string name="vote_average_prefix">Vote Average:</string>
+    <string name="vote_average_prefix">Vote Average:\u0020</string>
     <string name="vote_average_suffix">/10</string>
-    <string name="release_date_prefix">Release Date:</string>
+    <string name="release_date_prefix">Release Date:\u0020</string>
 </resources>

@@ -32,10 +32,6 @@ public class MovieGridAdapter extends ArrayAdapter<MovieModel.MovieItem> {
         }
         MovieModel.MovieItem i = objects.get(position);
         if (i != null) {
-//            TextView description = (TextView) v.findViewById(R.id.movie_cell_text_view);
-//            if (description != null && i.overview != null) {
-//                description.setText(i.overview);
-//            }
             ImageView imageView = (ImageView) v.findViewById(R.id.movie_cell_image_view);
             Uri.Builder builder = new Uri.Builder();
             builder.scheme("http").authority("image.tmdb.org").appendPath("t").appendPath("p").appendPath("w185").appendPath(i.posterPath);
