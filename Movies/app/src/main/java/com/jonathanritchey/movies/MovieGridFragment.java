@@ -153,6 +153,8 @@ public class MovieGridFragment extends Fragment {
         int width = displaymetrics.widthPixels;
         int numColumns = (width - gridViewSpacing) / (gridViewEntrySize + gridViewSpacing);
         mGridView.setNumColumns(numColumns);
+        mGridView.setHorizontalSpacing(gridViewSpacing);
+        mGridView.setVerticalSpacing(0);
     }
 
     @Override
