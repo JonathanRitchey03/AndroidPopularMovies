@@ -2,10 +2,12 @@ package com.jonathanritchey.movies;
 
 import android.app.Activity;
 import android.app.Fragment;
+import android.content.res.Configuration;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -141,6 +143,28 @@ public class MovieGridFragment extends Fragment {
         if (mActivatedPosition != ListView.INVALID_POSITION) {
             outState.putInt(STATE_ACTIVATED_POSITION, mActivatedPosition);
         }
+    }
+
+    private void refreshGridView() {
+        int gridViewEntrySize = getResources().getDimensionPixelSize(R.dimen.grid_view_entry_size);
+        int gridViewSpacing = getResources().getDimensionPixelSize(R.dimen.grid_view_spacing);
+        DisplayMetrics displaymetrics = new DisplayMetrics();
+        getActivity().getWindowManager().getDefaultDisplay().getMetrics(displaymetrics);
+        int width = displaymetrics.widthPixels;
+        int numColumns = (width - gridViewSpacing) / (gridViewEntrySize + gridViewSpacing);
+        mGridView.setNumColumns(numColumns);
+    }
+
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+        refreshGridView();
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        refreshGridView();
     }
 
     private void setActivatedPosition(int position) {
