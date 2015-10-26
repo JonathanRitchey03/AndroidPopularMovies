@@ -157,11 +157,9 @@ public class MovieGridFragment extends Fragment {
         float heightDp = height / displaymetrics.density;
         float shortestLengthDp = widthDp < heightDp ? widthDp : heightDp;
         boolean isTablet = shortestLengthDp >= 600;
-        int adjustedColumns = isTablet ? numColumns/2 : numColumns;
-        if (adjustedColumns == 0) adjustedColumns = 1;
-        mGridView.setNumColumns(adjustedColumns);
-        mGridView.setHorizontalSpacing(gridViewSpacing);
-        mGridView.setVerticalSpacing(10);
+        if ( !isTablet ) {
+            mGridView.setNumColumns(numColumns);
+        }
     }
 
     @Override
